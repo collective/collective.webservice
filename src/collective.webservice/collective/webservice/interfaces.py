@@ -12,6 +12,12 @@ class IWebserviceSettings(Interface):
             value_type=schema.TextLine(),
             required=False,
             )
+    proxyInfo = schema.Tuple(
+            title=_(u"Information about Proxy"),
+            description=_(u"Enter your proxy address like http://your.proxy:8080"),
+            value_type=schema.Text(),
+            required=False,
+            )
 
 
 class Webservices(Interface):
@@ -25,7 +31,7 @@ class Webservices(Interface):
     def webservice_caller_proxy(wsdl, method, parameters, timeout, map, v_namespace, v_soapaction):
         """ Method for use with a axis webservice behind a proxy """
 
-    def restful_caller(url,method,parameter,http_method):
+    def restful_caller(url, method, parameter, http_method):
         """ Method for use with REST webservices """
 
     def restful_Json_caller(url, parameters):
