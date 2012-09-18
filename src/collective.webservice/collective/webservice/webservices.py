@@ -16,7 +16,8 @@ from zLOG import LOG, INFO
 DEBUG_1 = 0
 DEBUG_2 = 0
 DEBUG_3 = 0
-TIMEOUT = 60
+TIMEOUT = 60  # Setting Default Timeout to 60 seconds
+MY_PROXY = '10.1.1.46:8080'  # TODO: Put this information in Control Panel
 
 
 class Webservices(BrowserView):
@@ -25,16 +26,16 @@ class Webservices(BrowserView):
    # def teste(self):
         #pdb.set_trace()
 
-    def webservice_caller(self, wsdl, metodo, parametros, timeout = TIMEOUT, map = {}):
+    def webservice_caller(self, wsdl, method, parameters, timeout=TIMEOUT, map={}):
 
         SOAPpy.Config.debug = DEBUG_1
 
         if DEBUG_1:
             LOG('CCOLLECTIVE.WEBSERVICE', INFO, 'Start of method webservice_caller. wsdl: %s, method: %s, parameters: %s, timeout: %d, map: %s' % \
-               (wsdl, metodo, repr(parametros), timeout, repr(map)))
+               (wsdl, method, repr(parameters), timeout, repr(map)))
 
-        if isinstance(parametros, dict) and parametros.get('timeout', None) is not None:
-            timeout = parametros['timeout']
+        if isinstance(parameters, dict) and parameters.get('timeout', None) is not None:
+            timeout = parameters['timeout']
 
         SOAPpy.Config.methodAttributeParameters = map
 
@@ -43,18 +44,18 @@ class Webservices(BrowserView):
     #    SOAPpy.Config.dumpSOAPOut = 1
     #    SOAPpy.Config.dumpSOAPIn = 1
 
-        return self.result_webservice(wsdl, metodo, parametros, timeout, map, p, DEBUG_1)
+        return self.result_webservice(wsdl, method, parameters, timeout, map, p, DEBUG_1)
 
-    def webservice_caller_axis(self, wsdl, metodo, parametros, timeout=TIMEOUT, map={}, v_namespace='', v_soapaction=''):
+    def webservice_caller_axis(self, wsdl, method, parameters, timeout=TIMEOUT, map={}, v_namespace='', v_soapaction=''):
 
         SOAPpy.Config.debug = DEBUG_2
 
         if DEBUG_2:
             LOG('COLLECTIVE.WEBSERVICE', INFO, 'Start of method webservice_caller_axis. wsdl: %s, method: %s, parameters: %s, timeout: %d, map: %s' % \
-               (wsdl, metodo, repr(parametros), timeout, repr(map)))
+               (wsdl, method, repr(parameters), timeout, repr(map)))
 
-        if isinstance(parametros, dict) and parametros.get('timeout', None) is not None:
-            timeout = parametros['timeout']
+        if isinstance(parameters, dict) and parameters.get('timeout', None) is not None:
+            timeout = parameters['timeout']
 
         SOAPpy.Config.methodAttributeParameters = map
 
@@ -65,44 +66,44 @@ class Webservices(BrowserView):
 
         # return p.HelloWorld("nom")
 
-        return self.result_webservice(wsdl, metodo, parametros, timeout, map, p, DEBUG_2)
+        return self.result_webservice(wsdl, method, parameters, timeout, map, p, DEBUG_2)
 
-    def webservice_caller_proxy(self, wsdl, metodo, parametros, timeout=TIMEOUT, map={}, v_namespace='', v_soapaction=''):
+    def webservice_caller_proxy(self, wsdl, method, parameters, timeout=TIMEOUT, map={}, v_namespace='', v_soapaction=''):
 
         SOAPpy.Config.debug = DEBUG_3
 
         if DEBUG_3:
             LOG('COLLECTIVE.WEBSERVICE', INFO, 'Start of method webservice_caller_externo. wsdl: %s, method: %s, parameters: %s, timeout: %d, map: %s' % \
-               (wsdl, metodo, repr(parametros), timeout, repr(map)))
+               (wsdl, method, repr(parameters), timeout, repr(map)))
 
-        if isinstance(parametros, dict) and parametros.get('timeout', None) is not None:
-            timeout = parametros['timeout']
+        if isinstance(parameters, dict) and parameters.get('timeout', None) is not None:
+            timeout = parameters['timeout']
 
         SOAPpy.Config.methodAttributeParameters = map
 
-        p = SOAPProxy(wsdl, namespace=v_namespace, soapaction=v_soapaction, http_proxy='10.1.1.46:8080', timeout=timeout)
+        p = SOAPProxy(wsdl, namespace=v_namespace, soapaction=v_soapaction, http_proxy=MY_PROXY, timeout=timeout)
 
         # p.config.dumpSOAPOut = 1
         # p.config.dumpSOAPIn = 1
 
         # return p.HelloWorld("nom")
 
-        return self.result_webservice(wsdl, metodo, parametros, timeout, map, p, DEBUG_3)
+        return self.result_webservice(wsdl, method, parameters, timeout, map, p, DEBUG_3)
 
-    def result_webservice(self, wsdl, metodo, parametros, timeout, map, p, DEBUG):
+    def result_webservice(self, wsdl, method, parameters, timeout, map, p, DEBUG):
 
         ret = None
 
-        if isinstance(parametros, dict):
-            ret = getattr(p, metodo)(**parametros)
+        if isinstance(parameters, dict):
+            ret = getattr(p, method)(**parameters)
         else:
-            if not isinstance(parametros, tuple):
-                parametros = (parametros,)
-            ret = getattr(p, metodo)(*parametros)
+            if not isinstance(parameters, tuple):
+                parameters = (parameters,)
+            ret = getattr(p, method)(*parameters)
 
         if DEBUG:
             LOG('COLLECTIVE.WEBSERVICE', INFO, 'End of method. wsdl: %s, method: %s, parameters: %s, timeout: %d, map: %s' % \
-              (wsdl, metodo, repr(parametros), timeout, repr(map)))
+              (wsdl, method, repr(parameters), timeout, repr(map)))
 
         if type(ret) == type(u'a'):
             return ret
@@ -118,21 +119,22 @@ class Webservices(BrowserView):
             except:
                 return ret
 
-    def restful_caller(self, url, metodo, parametros, http_metodo):
+    def restful_caller(self, url, method, parameters, http_method):
         try:
             conn = Connection(url)
         except:
             return 'Cant connect with ' + url
         ret = None
-        if http_metodo.upper() == 'GET':
+        if http_method.upper() == 'GET':
             try:
-                ret = conn.request_get(resource=metodo, args=parametros, headers={'Content-type': 'text/xml', 'Accept': 'text/xml'})
+                ret = conn.request_get(resource=method, args=parameters, headers={'Content-type': 'text/xml', 'Accept': 'text/xml'})
             except:
-                ret = 'Problem with method ' + metodo
+                ret = 'Problem with method ' + method
         return ret
+        # TODO : POST, UPDATE and DELETE Methods
 
-    def restful_Json_caller(self, url, parametros):
-        url = url + '?' + urllib.urlencode(parametros)
+    def restful_Json_caller(self, url, parameters):
+        url = url + '?' + urllib.urlencode(parameters)
         result = simplejson.load(urllib.urlopen(url))
         return result
 
