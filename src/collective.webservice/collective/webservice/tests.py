@@ -1,23 +1,17 @@
 # -*- coding: utf-8 -*-
 import unittest
 from collective.webservice.testing import COLLECTIVE_WEBSERVICE_INTEGRATION_TESTING
+from collective.webservice.config import PROJECTNAME
+
 
 class TestSetup(unittest.TestCase):
-	layer = COLLECTIVE_WEBSERVICE_INTEGRATION_TESTING
+    layer = COLLECTIVE_WEBSERVICE_INTEGRATION_TESTING
 
-  	def test_portal_title(self):
-		portal = self.layer['portal']
-		self.assertEqual(
-			"Câmara dos Deputados",
-			portal.getProperty('title')
-			)
+    def setUp(self):
+        self.portal = self.layer['portal']
+        self.qi = self.portal['portal_quickinstaller']
 
-	def test_portal_description(self):
-		portal = self.layer['portal']
-		self.assertEqual(
-			"Bem vindo ao Portal da Camara dos Deputados",
-			portal.getProperty('description')
-			)
- 
+    def test_installed(self):
+        self.assertTrue(self.qi.isProductInstalled(PROJECTNAME))
 
 

@@ -11,17 +11,14 @@ class CollectiveWebservice(PloneSandboxLayer):
     def setUpZope(self, app, configurationContext):
         # Load ZCML
         import collective.webservice
-        xmlconfig.file('configure.zcml',
-			collective.webservice,
-			context=configurationContext
-		)
+        xmlconfig.file('configure.zcml', collective.webservice, context=configurationContext)
 
-	def setUpPloneSite(self, portal):
-		applyProfile(portal, 'collective.webservice:default')
+    def setUpPloneSite(self, portal):
+        applyProfile(portal, 'collective.webservice:default')
 
 COLLECTIVE_WEBSERVICE_FIXTURE = CollectiveWebservice()
 COLLECTIVE_WEBSERVICE_INTEGRATION_TESTING = IntegrationTesting(
-	bases=(COLLECTIVE_WEBSERVICE_FIXTURE,),
-	name="Collective:Integration"
-	)
+    bases=(COLLECTIVE_WEBSERVICE_FIXTURE,),
+    name="Collective:Integration"
+    )
 

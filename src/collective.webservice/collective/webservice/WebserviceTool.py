@@ -6,7 +6,7 @@ from Globals import InitializeClass
 class WebserviceTool (UniqueObject, SimpleItem):
     """ WebServiceTool  .... """
     id = 'webservice_tool'
-    meta_type= 'Web Service Tool' 
+    meta_type = 'Web Service Tool' 
     plone_tool = 1
 
     def method(self, id_webservice):
