@@ -1,0 +1,36 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    i18n_domain="collective.webservice">
+
+  <!-- Include dependencies' configuration -->
+  <includeDependencies package="." />
+
+  <!-- Register the control panel for Webservice settings -->
+  <browser:page
+      for="Products.CMFCore.interfaces.ISiteRoot"
+      name="webservice-controlpanel"
+      class=".controlpanel.WebserviceControlPanelView"
+      permission="cmf.ManagePortal"
+      />
+
+   <browser:page
+       for="*"
+       name="view_webservice"
+       class=".webservices.Webservices"
+       permission="zope2.Public"
+	   allowed_interface=".interfaces.Webservices"
+       />      
+      
+  <genericsetup:registerProfile
+      name="default"
+      title="Collective Webservice Tool"
+      directory="profiles/default"
+      description="Installs the tool to manage webservices"
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+  <!-- -*- extra stuff goes here -*- -->
+  
+</configure>

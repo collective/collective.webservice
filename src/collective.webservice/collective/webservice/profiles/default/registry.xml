@@ -1,0 +1,4 @@
+<registry>
+  <records
+    interface="collective.webservice.interfaces.IWebserviceSettings"/>
+</registry>

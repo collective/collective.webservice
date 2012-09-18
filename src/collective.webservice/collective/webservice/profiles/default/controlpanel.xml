@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<object
+    name="portal_controlpanel"
+    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+    i18n:domain="collective.webservice">
+
+    <configlet
+        title="Webservices Settings"
+        action_id="webservices"
+        appId="webservices"
+        category="Products"
+        condition_expr=""
+        url_expr="string:${portal_url}/@@webservice-controlpanel"
+        icon_expr="string:$portal_url/++resource++collective.webservice/webservice_tool.gif"
+        visible="True"
+        i18n:attributes="title">
+            <permission>Manage portal</permission>
+    </configlet>
+</object>
