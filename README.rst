@@ -8,12 +8,14 @@ Introduction
 ------------
 
 A collection of methods to integrate Plone with webservices. Under development.
+
 The product provides a collection of methods to call some types of webservices:
-* webservice_caller(wsdl, method, parameters, timeout=TIMEOUT, map={})
-* webservice_caller_axis(wsdl, method, parameters, timeout=TIMEOUT, map={}, v_namespace='', v_soapaction='')
-* webservice_caller_proxy(wsdl, method, parameters, timeout=TIMEOUT, map={}, v_namespace='', v_soapaction='')
-* restful_caller(url, method, parameters, http_method)
-* restful_Json_caller(url, parameters)
+
+- webservice_caller(wsdl, method, parameters, timeout=TIMEOUT, map={})
+- webservice_caller_axis(wsdl, method, parameters, timeout=TIMEOUT, map={}, v_namespace='', v_soapaction='')
+- webservice_caller_proxy(wsdl, method, parameters, timeout=TIMEOUT, map={}, v_namespace='', v_soapaction='')
+- restful_caller(url, method, parameters, http_method)
+- restful_Json_caller(url, parameters)
 
 Installation
 ------------
