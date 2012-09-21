@@ -1,11 +1,11 @@
 from setuptools import setup, find_packages
 import os
 
-version = '1.0'
+version = '0.2'
 
 setup(name='collective.webservice',
       version=version,
-      description="Tool to work with WebServices",
+      description="Add-on to work with webservices.",
       long_description=open("README.rst").read() + "\n" +
                        open(os.path.join("docs", "HISTORY.txt")).read(),
       # Get more strings from
@@ -14,9 +14,9 @@ setup(name='collective.webservice',
         "Framework :: Plone",
         "Programming Language :: Python",
         ],
-      keywords='',
-      author='Fabio Surrage de Medeiros',
-      author_email='fabiosurrage@gmail.com',
+      keywords='plone webservices',
+      author='Fabio Surrage,Fabiano Weimar',
+      author_email='fabiosurrage@gmail.com,xiru@xiru.com',
       url='http://github.com/collective/collective.webservice',
       license='GPL',
       packages=find_packages(exclude=['ez_setup']),
@@ -25,10 +25,10 @@ setup(name='collective.webservice',
       zip_safe=False,
       install_requires=[
           'setuptools',
-          'Plone',
-          'Products.CMFPlone',
-          'plone.app.registry',
-          'plone.app.z3cform',
+          'five.grok',
+          'SOAPpy',
+          'httplib2',
+          'simplejson',
           # -*- Extra requirements: -*-
       ],
       extras_require={
@@ -40,6 +40,6 @@ setup(name='collective.webservice',
       [z3c.autoinclude.plugin]
       target = plone
       """,
-      #setup_requires=["PasteScript"],
-      #paster_plugins=["ZopeSkel"],
+      setup_requires=["PasteScript"],
+      paster_plugins=["ZopeSkel"],
       )

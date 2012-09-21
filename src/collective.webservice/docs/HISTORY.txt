@@ -1,7 +1,13 @@
 Changelog
 =========
 
-1.0dev (unreleased)
+0.1 (unreleased)
 -------------------
 
 - Initial release
+
+0.2 (unreleased)
+-------------------
+
+- Refactored using Grok
+- Added proxy and memcached to the Webservice Control Panel

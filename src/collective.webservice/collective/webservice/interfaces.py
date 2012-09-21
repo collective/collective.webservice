@@ -6,21 +6,24 @@ from collective.webservice import WebserviceMessageFactory as _
 
 
 class IWebserviceSettings(Interface):
-    webserviceInfo = schema.Tuple(
-            title=_(u"Information about WebServices"),
-            description=_(u"Information about WebServices"),
-            value_type=schema.TextLine(),
-            required=False,
-            )
     proxyInfo = schema.Tuple(
             title=_(u"Information about Proxy"),
             description=_(u"Enter your proxy address like http://your.proxy:8080"),
-            value_type=schema.Text(),
+            value_type=schema.TextLine(),
+            required=False,
+            )
+
+    memcachedInfo = schema.Tuple(
+            title=_(u"Information about Memcached"),
+            description=_(u"Enter the adress of your memcached server like your.proxy:8080"),
+            value_type=schema.TextLine(),
             required=False,
             )
 
 
-class Webservices(Interface):
+class IWS(Interface):
+    """A webservices runner.
+    """
 
     def webservice_caller(wsdl, method, parameters, timeout, map):
         """ Method for use with a standart webservice """

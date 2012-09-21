@@ -1,3 +1,4 @@
+# -*- extra stuff goes here -*-
 from zope.i18nmessageid import MessageFactory
 
 # Define a message factory for when this product is internationalised.
@@ -5,3 +6,8 @@ from zope.i18nmessageid import MessageFactory
 # like _(u"message") will then be extracted by i18n tools for translation.
 
 WebserviceMessageFactory = MessageFactory('collective.webservice')
+
+
+def initialize(context):
+    """Initializer called when used as a Zope 2 product."""
+

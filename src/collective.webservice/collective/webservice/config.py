@@ -2,6 +2,6 @@
 # File: config.py
 
 
-__author__ = """Câmara dos Deputados <codis.cenin@camara.gov.br>"""
+__author__ = """Fabio Surrage <fabiosurrage@gmail.com> e Fabiano Weimar <xiru@xiru.com>"""
 __docformat__ = 'plaintext'
 PROJECTNAME = 'collective.webservice'
