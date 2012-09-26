@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 import os
 
-version = '0.2'
+version = '0.3'
 
 setup(name='collective.webservice',
       version=version,
@@ -13,13 +13,15 @@ setup(name='collective.webservice',
       classifiers=[
         "Framework :: Plone",
         "Programming Language :: Python",
+        "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
         ],
       keywords='plone webservices',
       author='Fabio Surrage,Fabiano Weimar',
       author_email='fabiosurrage@gmail.com,xiru@xiru.com',
       url='http://github.com/collective/collective.webservice',
-      license='GPL',
-      packages=find_packages(exclude=['ez_setup']),
+      license='GPLv2',
+      packages=find_packages('src', exclude=['ez_setup']),
+      package_dir={'': 'src'},
       namespace_packages=['collective'],
       include_package_data=True,
       zip_safe=False,
