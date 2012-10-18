@@ -5,7 +5,7 @@
 
   <browser:page
       for="plone.app.layout.navigation.interfaces.INavigationRoot"
-      name="ws"
+      name="webservice_view"
       class=".views.WSView"
       permission="zope.Public"
       allowed_interface="collective.webservice.interfaces.IWS"
