@@ -28,10 +28,10 @@ class WSJson(grok.View):
     grok.require('zope2.View')
 
     def render(self):
-        """ Run the webservice and return json.
+        """ Return the list of WebServices
         """
         return "Im here!"
-        ## TODO: Cllaing this view shows the configuration os all Webservices (Webservices Control Panel)
+        ## TODO: Calling this view shows the configuration os all Webservices (Webservices Control Panel)
 
 
 class WSView(BrowserView):
