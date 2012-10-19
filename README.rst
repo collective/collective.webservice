@@ -16,6 +16,7 @@ The product provides a collection of methods to call some types of webservices:
 - webservice_caller_proxy(wsdl, method, parameters, timeout=TIMEOUT, map={}, v_namespace='', v_soapaction='')
 - restful_caller(url, method, parameters, http_method)
 - restful_Json_caller(url, parameters)
+- call_webservice(wsdl, method, parameters, timeout)
 
 Installation
 ------------

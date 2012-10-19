@@ -8,7 +8,7 @@ from collective.webservice import WebserviceMessageFactory as _
 class IWebserviceSettings(Interface):
     proxyInfo = schema.Tuple(
             title=_(u"Information about Proxy"),
-            description=_(u"Enter your proxy address like http://your.proxy:8080"),
+            description=_(u"Enter your proxy address like your.proxy:8080"),
             value_type=schema.TextLine(),
             required=False,
             )
@@ -17,6 +17,21 @@ class IWebserviceSettings(Interface):
             title=_(u"Information about Memcached"),
             description=_(u"Enter the adress of your memcached server like your.proxy:8080"),
             value_type=schema.TextLine(),
+            required=False,
+            )
+
+    defaultTimeout = schema.Tuple(
+            title=_(u"Information about default timeout for webservices"),
+            description=_(u"Enter the default timeout in seconds for the webservices"),
+            value_type=schema.TextLine(),
+            default=('60',),
+            required=False,
+            )
+
+    wsdlAddress = schema.Tuple(
+            title=_(u"List os WSDLs address"),
+            description=_(u"For each webservice that you will use, enter a wsdl url here"),
+            value_type=schema.Text(),
             required=False,
             )
 

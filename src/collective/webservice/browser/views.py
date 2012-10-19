@@ -4,6 +4,9 @@ from five import grok
 from plone.app.layout.navigation.interfaces import INavigationRoot
 from Products.Five import BrowserView
 from collective.webservice.interfaces import IWS
+from zope.component import queryUtility
+from plone.registry.interfaces import IRegistry
+from collective.webservice.interfaces import IWebserviceSettings
 from restful_lib import Connection
 import simplejson
 import urllib
@@ -17,7 +20,6 @@ DEBUG_1 = 0
 DEBUG_2 = 0
 DEBUG_3 = 0
 TIMEOUT = 60  # Setting Default Timeout to 60 seconds
-MY_PROXY = '10.1.1.46:8080'  # TODO: Get this information from Control Panel
 
 
 class WSJson(grok.View):
@@ -182,13 +184,24 @@ class WSView(BrowserView):
             return object
 
     def call_webservice(self, **kwargs):
+        registry = queryUtility(IRegistry)
+        if registry is None:
+            PROXY = None
+            TIMEOUT = 60
+        else:
+            settings = registry.forInterface(IWebserviceSettings, check=False)
+            ## TODO : Test if not set
+            PROXY = settings.proxyInfo[0]
+            TIMEOUT = settings.defaultTimeout[0]
+
         wsdl = kwargs.get('wsdl', '')
         method = kwargs.get('method', '')
         timeout = kwargs.get('timeout', TIMEOUT)
         parameters = kwargs.get('parameters')
         client = Client(wsdl, timeout=timeout)
-        d = dict(http=MY_PROXY, https=MY_PROXY)
-        client.set_options(proxy=d)
+        if PROXY:
+            d = dict(http=PROXY, https=PROXY)
+            client.set_options(proxy=d)
         #client.set_options(retxml=True)
         if isinstance(parameters, dict):
             ret = getattr(client.service, method)(**parameters)
