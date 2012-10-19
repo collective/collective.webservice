@@ -16,3 +16,8 @@ Changelog
 -------------------
 
 - Refactored to put things in its right places (directories)
+
+0.4 (unreleased)
+
+- Added method using SUDS
+- Added translation file of GPLv2 (brazilian portuguese)
