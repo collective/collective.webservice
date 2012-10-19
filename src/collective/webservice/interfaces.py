@@ -45,3 +45,6 @@ class IWS(Interface):
 
     def isPublic(name):
         """ """
+
+    def call_webservice(**kwargs):
+        """ Method in SUDS to call a webservice """

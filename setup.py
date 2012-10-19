@@ -31,6 +31,7 @@ setup(name='collective.webservice',
           'SOAPpy',
           'httplib2',
           'simplejson',
+          'suds',
           # -*- Extra requirements: -*-
       ],
       extras_require={

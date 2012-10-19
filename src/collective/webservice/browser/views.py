@@ -9,6 +9,7 @@ import simplejson
 import urllib
 import SOAPpy
 from SOAPpy import SOAPProxy
+from suds.client import Client
 import sys
 from types import *
 from zLOG import LOG, INFO
@@ -179,3 +180,21 @@ class WSView(BrowserView):
             return object.encode('utf-8')
         else:
             return object
+
+    def call_webservice(self, **kwargs):
+        wsdl = kwargs.get('wsdl', '')
+        method = kwargs.get('method', '')
+        timeout = kwargs.get('timeout', TIMEOUT)
+        parameters = kwargs.get('parameters')
+        client = Client(wsdl, timeout=timeout)
+        d = dict(http=MY_PROXY, https=MY_PROXY)
+        client.set_options(proxy=d)
+        #client.set_options(retxml=True)
+        if isinstance(parameters, dict):
+            ret = getattr(client.service, method)(**parameters)
+        else:
+            if not isinstance(parameters, tuple):
+                parameters = (parameters,)
+            ret = getattr(client.service, method)(*parameters)
+
+        return ret
