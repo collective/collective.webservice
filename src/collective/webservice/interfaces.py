@@ -13,10 +13,18 @@ class IWebserviceSettings(Interface):
             required=False,
             )
 
-    memcachedInfo = schema.Tuple(
+    memcachedAddress = schema.Tuple(
             title=_(u"Information about Memcached"),
             description=_(u"Enter the adress of your memcached server like your.proxy:8080"),
             value_type=schema.TextLine(),
+            required=False,
+            )
+
+    memcachedCache = schema.Tuple(
+            title=_(u"Information about Memcached"),
+            description=_(u"Enter the default time of expiration of your memcached cache in seconds"),
+            value_type=schema.TextLine(),
+            default=('600',),
             required=False,
             )
 
@@ -24,7 +32,7 @@ class IWebserviceSettings(Interface):
             title=_(u"Information about default timeout for webservices"),
             description=_(u"Enter the default timeout in seconds for the webservices"),
             value_type=schema.TextLine(),
-            default=('60',),
+            default=('30',),
             required=False,
             )
 

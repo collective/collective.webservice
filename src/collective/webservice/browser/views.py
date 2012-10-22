@@ -1,4 +1,6 @@
 import json
+import hashlib
+import memcache
 from zope.interface import implements
 from five import grok
 from plone.app.layout.navigation.interfaces import INavigationRoot
@@ -187,27 +189,65 @@ class WSView(BrowserView):
         registry = queryUtility(IRegistry)
         if registry is None:
             PROXY = None
-            TIMEOUT = 60
+            DEFAULT_TIMEOUT = 30
+            DEFAULT_CACHE = 600
+            MEMCACHED = None
         else:
             settings = registry.forInterface(IWebserviceSettings, check=False)
-            ## TODO : Test if not set
-            PROXY = settings.proxyInfo[0]
-            TIMEOUT = settings.defaultTimeout[0]
+            # Setting PROXY
+            if settings.proxyInfo:
+                PROXY = settings.proxyInfo[0]
+            else:
+                PROXY = None
+            # Setting default TIMEOUT
+            if settings.defaultTimeout:
+                DEFAULT_TIMEOUT = settings.defaultTimeout[0]
+            else:
+                DEFAULT_TIMEOUT = 30
+            # Setting MEMCACHED address
+            if settings.memcachedAddress:
+                MEMCACHED = settings.memcachedAddress[0]
+            else:
+                MEMCACHED = None
+            # Setting default Memcached CACHE
+            if settings.memcachedAddress:
+                DEFAULT_CACHE = settings.memcachedCache[0]
+            else:
+                DEFAULT_CACHE = 600
 
         wsdl = kwargs.get('wsdl', '')
         method = kwargs.get('method', '')
         timeout = kwargs.get('timeout', TIMEOUT)
+        cache = kwargs.get('cache', DEFAULT_CACHE)
         parameters = kwargs.get('parameters')
         client = Client(wsdl, timeout=timeout)
         if PROXY:
             d = dict(http=PROXY, https=PROXY)
             client.set_options(proxy=d)
+
+        if MEMCACHED:
+            # calcule the cache key
+            m = hashlib.md5()
+            m.update(repr(kwargs))
+            key = m.hexdigest()
+
+            # create the memcached connection
+            mc = memcache.Client([MEMCACHED])
+
+            value = mc.get(key)
+
+            if value is not None:
+                return value
+
         #client.set_options(retxml=True)
         if isinstance(parameters, dict):
-            ret = getattr(client.service, method)(**parameters)
+            value = getattr(client.service, method)(**parameters)
         else:
             if not isinstance(parameters, tuple):
                 parameters = (parameters,)
-            ret = getattr(client.service, method)(*parameters)
+            value = getattr(client.service, method)(*parameters)
 
-        return ret
+        if MEMCACHED:
+            mc.set(key, repr(value), int(cache))
+
+        return value
