@@ -35,8 +35,17 @@ class WSJson(grok.View):
     def render(self):
         """ Return the list of WebServices
         """
-        return "Im here!"
-        ## TODO: Calling this view shows the configuration os all Webservices (Webservices Control Panel)
+        registry = queryUtility(IRegistry)
+        ret = ''
+        if registry is not None:
+            settings = registry.forInterface(IWebserviceSettings, check=False)
+            position = 0
+            for i in settings.wsdlAddress:
+                ret += str(position) + ' - ' + str(i) + '\n'
+                position += 1
+            return ret
+        else:
+            return "Registry values not set"
 
 
 class WSView(BrowserView):
