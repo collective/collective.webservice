@@ -4,8 +4,6 @@
    xmlns:browser="http://namespaces.zope.org/browser"
    i18n_domain="collective.webservice">
 
-    <five:registerPackage package="." initialize=".initialize" />
-   
     <browser:page
         for="plone.app.layout.navigation.interfaces.INavigationRoot"
         name="webservice_view"
