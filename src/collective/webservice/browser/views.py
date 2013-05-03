@@ -15,8 +15,17 @@ import urllib
 import SOAPpy
 from SOAPpy import SOAPProxy
 from suds.client import Client
+from suds.xsd.doctor import ImportDoctor, Import
 import sys
 from types import *
+
+try:
+    import threading
+    thread_local = threading.local()
+except ImportError:
+    import zope.thread
+    thread_local = zope.thread.local()
+
 from zLOG import LOG, INFO
 DEBUG_1 = 0
 DEBUG_2 = 0
@@ -48,7 +57,7 @@ class WSJson(grok.View):
             return "Registry values not set"
 
 
-class WSView(BrowserView):
+class WSView():
     """ A view that calls a webservice and return the suds output.
     """
 
@@ -59,35 +68,37 @@ class WSView(BrowserView):
         SOAPpy.Config.debug = DEBUG_1
 
         if DEBUG_1:
-            LOG('COLLECTIVE.WEBSERVICE', INFO, 'Start of method webservice_caller. wsdl: %s, method: %s, parameters: %s, timeout: %d, map: %s' % \
-               (wsdl, method, repr(parameters), timeout, repr(map)))
+            LOG('COLLECTIVE.WEBSERVICE', INFO,
+                'Start of method webservice_caller. wsdl: %s, method: %s, parameters: %s, \
+                timeout: %d, map: %s' % (wsdl, method, repr(parameters), timeout, repr(map)))
 
         if isinstance(parameters, dict) and parameters.get('timeout', None) is not None:
             timeout = parameters['timeout']
 
         SOAPpy.Config.methodAttributeParameters = map
 
-        p = SOAPpy.WSDL.Proxy(wsdl, timeout=timeout)
+        p = thread_local.client = SOAPpy.WSDL.Proxy(wsdl, timeout=timeout)
 
     #    SOAPpy.Config.dumpSOAPOut = 1
     #    SOAPpy.Config.dumpSOAPIn = 1
 
         return self.result_webservice(wsdl, method, parameters, timeout, map, p, DEBUG_1)
 
-    def webservice_caller_axis(self, wsdl, method, parameters, timeout=TIMEOUT, map={}, v_namespace='', v_soapaction=''):
+    def webservice_caller_axis(self, wsdl, method, parameters, timeout=TIMEOUT,
+                               map={}, v_namespace='', v_soapaction=''):
 
         SOAPpy.Config.debug = DEBUG_2
 
         if DEBUG_2:
-            LOG('COLLECTIVE.WEBSERVICE', INFO, 'Start of method webservice_caller_axis. wsdl: %s, method: %s, parameters: %s, timeout: %d, map: %s' % \
-               (wsdl, method, repr(parameters), timeout, repr(map)))
+            LOG('COLLECTIVE.WEBSERVICE', INFO, 'Start of method webservice_caller_axis. wsdl: %s, method: %s, \
+                parameters: %s, timeout: %d, map: %s' % (wsdl, method, repr(parameters), timeout, repr(map)))
 
         if isinstance(parameters, dict) and parameters.get('timeout', None) is not None:
             timeout = parameters['timeout']
 
         SOAPpy.Config.methodAttributeParameters = map
 
-        p = SOAPProxy(wsdl, namespace=v_namespace, soapaction=v_soapaction, timeout=timeout)
+        p = thread_local.client = SOAPProxy(wsdl, namespace=v_namespace, soapaction=v_soapaction, timeout=timeout)
 
         #p.config.dumpSOAPOut = 1
         #p.config.dumpSOAPIn = 1
@@ -96,20 +107,22 @@ class WSView(BrowserView):
 
         return self.result_webservice(wsdl, method, parameters, timeout, map, p, DEBUG_2)
 
-    def webservice_caller_proxy(self, wsdl, method, parameters, timeout=TIMEOUT, map={}, v_namespace='', v_soapaction=''):
+    def webservice_caller_proxy(self, wsdl, method, parameters, timeout=TIMEOUT,
+                                map={}, v_namespace='', v_soapaction=''):
 
         SOAPpy.Config.debug = DEBUG_3
 
         if DEBUG_3:
-            LOG('COLLECTIVE.WEBSERVICE', INFO, 'Start of method webservice_caller_externo. wsdl: %s, method: %s, parameters: %s, timeout: %d, map: %s' % \
-               (wsdl, method, repr(parameters), timeout, repr(map)))
+            LOG('COLLECTIVE.WEBSERVICE', INFO, 'Start of method webservice_caller_externo. wsdl: %s, method: %s, \
+                parameters: %s, timeout: %d, map: %s' % (wsdl, method, repr(parameters), timeout, repr(map)))
 
         if isinstance(parameters, dict) and parameters.get('timeout', None) is not None:
             timeout = parameters['timeout']
 
         SOAPpy.Config.methodAttributeParameters = map
 
-        p = SOAPProxy(wsdl, namespace=v_namespace, soapaction=v_soapaction, http_proxy=MY_PROXY, timeout=timeout)
+        p = thread_local.client = SOAPProxy(wsdl, namespace=v_namespace,
+                                            soapaction=v_soapaction, http_proxy=MY_PROXY, timeout=timeout)
 
         # p.config.dumpSOAPOut = 1
         # p.config.dumpSOAPIn = 1
@@ -130,22 +143,10 @@ class WSView(BrowserView):
             ret = getattr(p, method)(*parameters)
 
         if DEBUG:
-            LOG('COLLECTIVE.WEBSERVICE', INFO, 'End of method. wsdl: %s, method: %s, parameters: %s, timeout: %d, map: %s' % \
-              (wsdl, method, repr(parameters), timeout, repr(map)))
+            LOG('COLLECTIVE.WEBSERVICE', INFO, 'End of method. wsdl: %s, method: %s, parameters: %s, timeout: %d, \
+                map: %s' % (wsdl, method, repr(parameters), timeout, repr(map)))
 
-        if type(ret) == type(u'a'):
-            return ret
-        else:
-            try:
-                for x in ret:
-                    for k in x._keys():
-                        if type(x[k]) == type('a'):
-                            u = self.corrige_encoding(x[k])
-                            #u = unicode(x[k],'iso-8859-1').encode('utf-8')
-                            x._placeItem(k, u, 0, 0)
-                return ret
-            except:
-                return ret
+        return ret
 
     def restful_caller(self, url, method, parameters, http_method):
         try:
@@ -155,7 +156,8 @@ class WSView(BrowserView):
         ret = None
         if http_method.upper() == 'GET':
             try:
-                ret = conn.request_get(resource=method, args=parameters, headers={'Content-type': 'text/xml', 'Accept': 'text/xml'})
+                ret = conn.request_get(resource=method, args=parameters,
+                                       headers={'Content-type': 'text/xml', 'Accept': 'text/xml'})
             except:
                 ret = 'Problem with method ' + method
         return ret
@@ -165,34 +167,6 @@ class WSView(BrowserView):
         url = url + '?' + urllib.urlencode(parameters)
         result = simplejson.load(urllib.urlopen(url))
         return result
-
-    def isPublic(self, name):
-        return name[0] != '_'
-
-    def corrige_encoding(self, object, level=0):
-        if level > 10:
-            return object
-        if isinstance(object, faultType):
-            pass
-        elif isinstance(object, arrayType):
-            for k in range(len(object)):
-                object[k] = simplify(object[k], level=level + 1)
-            return object
-        elif isinstance(object, compoundType) or isinstance(object, structType) or type(object) == DictType:
-            for k in object.keys():
-                if self.isPublic(k):
-                    object[k] = simplify(object[k], level=level + 1)
-            return object
-        elif type(object) == list:
-            for k in range(len(object)):
-                object[k] = simplify(object[k])
-            return object
-        elif type(object) == type(''):
-            return unicode(object, 'iso-8859-1').encode('utf-8')
-        elif type(object) == type(u''):
-            return object.encode('utf-8')
-        else:
-            return object
 
     def call_webservice(self, **kwargs):
         registry = queryUtility(IRegistry)
@@ -229,7 +203,11 @@ class WSView(BrowserView):
         timeout = kwargs.get('timeout', TIMEOUT)
         cache = kwargs.get('cache', DEFAULT_CACHE)
         parameters = kwargs.get('parameters')
-        client = Client(wsdl, timeout=timeout)
+
+        imp = Import('http://schemas.xmlsoap.org/soap/encoding/')
+        doctor = ImportDoctor(imp)
+        client = thread_local.client = Client(wsdl, timeout=timeout, doctor=doctor)
+
         if PROXY:
             d = dict(http=PROXY, https=PROXY)
             client.set_options(proxy=d)
@@ -240,8 +218,8 @@ class WSView(BrowserView):
             m.update(repr(kwargs))
             key = m.hexdigest()
 
-            # create the memcached connection
-            mc = memcache.Client([MEMCACHED])
+            # create the memcached connection in new thread
+            mc = thread_local.client = memcache.Client([MEMCACHED])
 
             value = mc.get(key)
 
