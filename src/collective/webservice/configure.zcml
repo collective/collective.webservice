@@ -21,7 +21,7 @@
   
   <genericsetup:registerProfile
       name="default"
-      title="Webservices Tools"
+      title="collective.webservice"
       directory="profiles/default"
       description="Installs the collective.webservice package"
       provides="Products.GenericSetup.interfaces.EXTENSION"
