@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import json
 import hashlib
 import memcache
@@ -18,6 +19,9 @@ from suds.client import Client
 from suds.xsd.doctor import ImportDoctor, Import
 import sys
 from types import *
+from suds.sudsobject import asdict
+from suds.sudsobject import Object as SudsObject
+import cPickle as pickle
 
 try:
     import threading
@@ -30,7 +34,7 @@ from zLOG import LOG, INFO
 DEBUG_1 = 0
 DEBUG_2 = 0
 DEBUG_3 = 0
-TIMEOUT = 60  # Setting Default Timeout to 60 seconds
+TIMEOUT = 20  # Setting Default Timeout to 20 seconds
 
 
 class WSJson(grok.View):
@@ -127,8 +131,6 @@ class WSView():
         # p.config.dumpSOAPOut = 1
         # p.config.dumpSOAPIn = 1
 
-        # return p.HelloWorld("nom")
-
         return self.result_webservice(wsdl, method, parameters, timeout, map, p, DEBUG_3)
 
     def result_webservice(self, wsdl, method, parameters, timeout, map, p, DEBUG):
@@ -163,7 +165,13 @@ class WSView():
         return ret
         # TODO : POST, UPDATE and DELETE Methods
 
-    def restful_Json_caller(self, url, parameters):
+    def restful_Json_caller(self, url, method, parameters):
+
+        if url.endswith('/'):
+            url = url + method
+        else:
+            url = url + '/' + method
+
         url = url + '?' + urllib.urlencode(parameters)
         result = simplejson.load(urllib.urlopen(url))
         return result
@@ -226,15 +234,66 @@ class WSView():
             if value is not None:
                 return value
 
-        #client.set_options(retxml=True)
         if isinstance(parameters, dict):
-            value = getattr(client.service, method)(**parameters)
+            ws_value = getattr(client.service, method)(**parameters)
         else:
             if not isinstance(parameters, tuple):
                 parameters = (parameters,)
-            value = getattr(client.service, method)(*parameters)
+            ws_value = getattr(client.service, method)(*parameters)
+
+        value = node_to_dict(ws_value, {})
+
+        if isinstance(value, dict) and len(value.keys()) == 1:
+            value = value[value.keys()[0]]
 
         if MEMCACHED:
-            mc.set(key, repr(value), int(cache))
+
+            if value is not None:
+
+                if value == -1 or value == [] or value == {}:
+                    mc.delete(key)
+                    return value
+
+                if value:
+                    return value
+
+                else:
+                    mc.delete(key)
+                    return value
+            else:
+                mc.set(key, repr(value), int(cache))
 
         return value
+
+
+def node_to_dict(node, node_data):
+    """
+    http://stackoverflow.com/questions/2412486/serializing-a-suds-object-in-python
+    Author: Rogerio Hilbert Lima
+    """
+
+    if hasattr(node, '__keylist__'):
+        keys = node.__keylist__
+        for key in keys:
+            if isinstance(node[key], list):
+                lkey = key.replace('[]', '')
+                node_data[lkey] = node_to_dict(node[key], [])
+            elif hasattr(node[key], '__keylist__'):
+                node_data[key] = node_to_dict(node[key], {})
+            else:
+                if isinstance(node_data, list):
+                    node_data.append(node[key])
+                else:
+                    node_data[key] = node[key]
+        return node_data
+    else:
+        if isinstance(node, list):
+            node_data = []
+            for lnode in node:
+                node_data.append(node_to_dict(lnode, {}))
+            return node_data
+        else:
+            return node
+
+    node_to_dict(instance, node_data)
+    return node_data
