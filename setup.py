@@ -31,7 +31,6 @@ setup(name='collective.webservice',
           'SOAPpy',
           'httplib2',
           'simplejson',
-          'suds',
           # -*- Extra requirements: -*-
       ],
       extras_require={
@@ -43,6 +42,6 @@ setup(name='collective.webservice',
       [z3c.autoinclude.plugin]
       target = plone
       """,
-      setup_requires=["PasteScript"],
-      paster_plugins=["ZopeSkel"],
+      setup_requires=[],
+      paster_plugins=[],
       )
