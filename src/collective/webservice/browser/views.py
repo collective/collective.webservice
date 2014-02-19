@@ -13,6 +13,8 @@ from collective.webservice.interfaces import IWebserviceSettings
 from restful_lib import Connection
 import simplejson
 import urllib
+import urllib2
+import socket
 import SOAPpy
 from SOAPpy import SOAPProxy
 from suds.client import Client
@@ -165,14 +167,16 @@ class WSView():
         return ret
         # TODO : POST, UPDATE and DELETE Methods
 
-    def restful_Json_caller(self, url, method, parameters):
+    def restful_Json_caller(self, url, method, parameters, timeout=30):
 
         if url.endswith('/'):
             url = url + method
         else:
             url = url + '/' + method
 
-        url = url + '?' + urllib.urlencode(parameters)
+        if len(parameters) > 0:
+            url = "%s?%s" % (url, urllib.urlencode(parameters))
+
         result = simplejson.load(urllib.urlopen(url))
         return result
 
