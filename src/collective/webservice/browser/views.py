@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 import json
 import hashlib
 import memcache
@@ -13,10 +14,13 @@ from collective.webservice.interfaces import IWebserviceSettings
 from restful_lib import Connection
 import simplejson
 import urllib
+import urllib2
+import socket
 import SOAPpy
 from SOAPpy import SOAPProxy
 from suds.client import Client
 from suds.xsd.doctor import ImportDoctor, Import
+from suds.sax.text import Text
 import sys
 from types import *
 from suds.sudsobject import asdict
@@ -112,7 +116,7 @@ class WSView():
         return self.result_webservice(wsdl, method, parameters, timeout, map, p, DEBUG_2)
 
     def webservice_caller_proxy(self, wsdl, method, parameters, timeout=TIMEOUT,
-                                map={}, v_namespace='', v_soapaction=''):
+                                map={}, v_namespace='', v_soapaction='', http_proxy=''):
 
         SOAPpy.Config.debug = DEBUG_3
 
@@ -125,8 +129,13 @@ class WSView():
 
         SOAPpy.Config.methodAttributeParameters = map
 
-        p = thread_local.client = SOAPProxy(wsdl, namespace=v_namespace,
-                                            soapaction=v_soapaction, http_proxy=MY_PROXY, timeout=timeout)
+        http_proxy = os.environ.get("HTTP_PROXY", http_proxy)
+
+        p = thread_local.client = SOAPProxy(wsdl,
+                                            namespace=v_namespace,
+                                            soapaction=v_soapaction,
+                                            http_proxy=http_proxy,
+                                            timeout=timeout)
 
         # p.config.dumpSOAPOut = 1
         # p.config.dumpSOAPIn = 1
@@ -165,14 +174,16 @@ class WSView():
         return ret
         # TODO : POST, UPDATE and DELETE Methods
 
-    def restful_Json_caller(self, url, method, parameters):
+    def restful_Json_caller(self, url, method, parameters, timeout=30):
 
         if url.endswith('/'):
             url = url + method
         else:
             url = url + '/' + method
 
-        url = url + '?' + urllib.urlencode(parameters)
+        if len(parameters) > 0:
+            url = "%s?%s" % (url, urllib.urlencode(parameters))
+
         result = simplejson.load(urllib.urlopen(url))
         return result
 
@@ -265,7 +276,6 @@ class WSView():
 
         return value
 
-
 def node_to_dict(node, node_data):
     """
     http://stackoverflow.com/questions/2412486/serializing-a-suds-object-in-python
@@ -284,7 +294,10 @@ def node_to_dict(node, node_data):
                 if isinstance(node_data, list):
                     node_data.append(node[key])
                 else:
-                    node_data[key] = node[key]
+                    if isinstance(node[key], Text):
+                        node_data[key] = str(node[key])
+                    else:
+                        node_data[key] = node[key]
         return node_data
     else:
         if isinstance(node, list):
