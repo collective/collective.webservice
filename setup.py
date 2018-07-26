@@ -5,7 +5,7 @@ from setuptools import setup
 import os
 
 
-version = '0.5'
+version = '0.6'
 
 setup(name='collective.webservice',
       version=version,
