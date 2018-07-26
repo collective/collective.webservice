@@ -1,0 +1,24 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup">
+
+  <genericsetup:upgradeSteps
+      source="1"
+      destination="1001"
+      profile="collective.webservice:default">
+
+
+    <genericsetup:upgradeStep
+        title="Delete record to registry"
+        handler=".remove_old_fields"
+            />
+
+    <genericsetup:upgradeDepends
+        title="Remove fields record to the registry"
+        description="This fields will not be used."
+        import_steps="plone.app.registry"
+        />
+
+  </genericsetup:upgradeSteps>
+
+</configure>
