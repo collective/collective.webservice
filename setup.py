@@ -1,20 +1,23 @@
-from setuptools import setup, find_packages
+# -*- coding: utf-8 -*-
+from setuptools import find_packages
+from setuptools import setup
+
 import os
 
-version = '0.4'
+
+version = '0.5'
 
 setup(name='collective.webservice',
       version=version,
-      description="Add-on to work with webservices.",
-      long_description=open("README.rst").read() + "\n" +
-                       open(os.path.join("docs", "HISTORY.txt")).read(),
+      description='Add-on to work with webservices.',
+      long_description=open('README.rst').read() + '\n' + open(os.path.join('docs', 'HISTORY.txt')).read(),
       # Get more strings from
       # http://pypi.python.org/pypi?:action=list_classifiers
       classifiers=[
-        "Framework :: Plone",
-        "Programming Language :: Python",
-        "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
-        ],
+          'Framework :: Plone',
+          'Programming Language :: Python',
+          'License :: OSI Approved :: GNU General Public License v2 (GPLv2)',
+      ],
       keywords='plone webservices',
       author='Fabio Surrage,Fabiano Weimar',
       author_email='fabiosurrage@gmail.com,xiru@xiru.com',
@@ -27,18 +30,15 @@ setup(name='collective.webservice',
       zip_safe=False,
       install_requires=[
           'setuptools',
-          'five.grok',
           'SOAPpy',
-          'httplib2',
-          'simplejson',
-          # -*- Extra requirements: -*-
+          'suds',
       ],
       extras_require={
-          'test': ['plone.app.testing', ]
-          },
+          'test': [
+              'plone.app.testing',
+          ],
+      },
       entry_points="""
-      # -*- Entry points: -*-
-
       [z3c.autoinclude.plugin]
       target = plone
       """,

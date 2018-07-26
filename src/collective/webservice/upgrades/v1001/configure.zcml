@@ -7,7 +7,6 @@
       destination="1001"
       profile="collective.webservice:default">
 
-
     <genericsetup:upgradeStep
         title="Delete record to registry"
         handler=".remove_old_fields"

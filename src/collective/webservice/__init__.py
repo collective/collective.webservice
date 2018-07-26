@@ -1,7 +1,9 @@
-# -*- extra stuff goes here -*-
-from zope.i18nmessageid import MessageFactory
+# -*- coding: utf-8 -*-
+from AccessControl import allow_class
+from AccessControl import allow_module
 from AccessControl import ModuleSecurityInfo
-from AccessControl import allow_class, allow_module
+from zope.i18nmessageid import MessageFactory
+
 
 # Define a message factory for when this product is internationalised.
 # This will be imported with the special name "_" in most modules. Strings
@@ -87,9 +89,9 @@ def initialize(context):
     """
 
     tipos = [t.strip() for t in tipos.split('\n') if t.strip()]
-    
+
     product_globals = globals()
-    
+
     for t in tipos:
         dotted_name = 'SOAPpy.Types.' + t
         parts = dotted_name.split('.')
@@ -99,7 +101,7 @@ def initialize(context):
         module = __import__(m_name, product_globals, locals(), [k_name])
         klass = getattr(module, k_name)
         allow_class(klass)
-    
+
     allow_module('xml.parsers.expat')
-    
+
     ModuleSecurityInfo('App.Common').declarePublic('rfc1123_date')

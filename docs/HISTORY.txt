@@ -1,23 +1,40 @@
 Changelog
 =========
 
-0.1 (unreleased)
--------------------
+0.5 (2018-07-26)
+^^^^^^^^^^^^^^^^
 
-- Initial release
+- Removed old clients REST - use "requests" library
+  [claytonc]
+- Removed memcache library
+  [claytonc]
+- PEP-8, Flake8
+  [claytonc]
+- Remove grok
+  [claytonc]
+
+
+0.4 (unreleased)
+^^^^^^^^^^^^^^^^
+
+- Added method using SUDS
+- Added translation file of GPLv2 (brazilian portuguese)
+
+
+0.3 (unreleased)
+^^^^^^^^^^^^^^^^^^^
+
+- Refactored to put things in its right places (directories)
+
 
 0.2 (unreleased)
--------------------
+^^^^^^^^^^^^^^^^^^^
 
 - Refactored using Grok
 - Added proxy and memcached to the Webservice Control Panel
 
-0.3 (unreleased)
--------------------
 
-- Refactored to put things in its right places (directories)
+0.1 (unreleased)
+^^^^^^^^^^^^^^^^^^^
 
-0.4 (unreleased)
-
-- Added method using SUDS
-- Added translation file of GPLv2 (brazilian portuguese)
+- Initial release

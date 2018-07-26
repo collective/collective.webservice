@@ -1,7 +1,8 @@
-from plone.app.testing import PloneSandboxLayer
+# -*- coding: utf-8 -*-
 from plone.app.testing import applyProfile
-from plone.app.testing import PLONE_FIXTURE
 from plone.app.testing import IntegrationTesting
+from plone.app.testing import PLONE_FIXTURE
+from plone.app.testing import PloneSandboxLayer
 from zope.configuration import xmlconfig
 
 
@@ -16,9 +17,9 @@ class CollectiveWebservice(PloneSandboxLayer):
     def setUpPloneSite(self, portal):
         applyProfile(portal, 'collective.webservice:default')
 
+
 COLLECTIVE_WEBSERVICE_FIXTURE = CollectiveWebservice()
 COLLECTIVE_WEBSERVICE_INTEGRATION_TESTING = IntegrationTesting(
     bases=(COLLECTIVE_WEBSERVICE_FIXTURE,),
-    name="Collective:Integration"
-    )
-
+    name='Collective:Integration',
+)

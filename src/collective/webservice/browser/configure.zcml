@@ -1,6 +1,5 @@
 <configure
    xmlns="http://namespaces.zope.org/zope"
-   xmlns:five="http://namespaces.zope.org/five"
    xmlns:browser="http://namespaces.zope.org/browser"
    i18n_domain="collective.webservice">
 
@@ -8,8 +7,11 @@
         for="*"
         name="webservice_view"
         class=".views.WSView"
-        permission="zope.Public"
-        allowed_interface="collective.webservice.interfaces.IWS"
+        permission="zope2.Public"
+        allowed_attributes="webservice_caller
+                            webservice_caller_axis
+                            webservice_caller_proxy
+                            call_webservice"
         />
 
 </configure>

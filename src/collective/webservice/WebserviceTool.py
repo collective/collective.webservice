@@ -1,6 +1,7 @@
-from Products.CMFCore.utils import UniqueObject
-from OFS.SimpleItem import SimpleItem
+# -*- coding: utf-8 -*-
 from Globals import InitializeClass
+from OFS.SimpleItem import SimpleItem
+from Products.CMFCore.utils import UniqueObject
 
 
 class WebserviceTool (UniqueObject, SimpleItem):
@@ -12,5 +13,6 @@ class WebserviceTool (UniqueObject, SimpleItem):
     def method(self, id_webservice):
         """ method ... """
         pass
+
 
 InitializeClass(WebserviceTool)

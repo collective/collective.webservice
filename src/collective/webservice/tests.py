@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-import unittest
-from collective.webservice.testing import COLLECTIVE_WEBSERVICE_INTEGRATION_TESTING
 from collective.webservice.config import PROJECTNAME
+from collective.webservice.testing import COLLECTIVE_WEBSERVICE_INTEGRATION_TESTING
+
+import unittest
 
 
 class TestSetup(unittest.TestCase):
@@ -13,5 +14,3 @@ class TestSetup(unittest.TestCase):
 
     def test_installed(self):
         self.assertTrue(self.qi.isProductInstalled(PROJECTNAME))
-
-
