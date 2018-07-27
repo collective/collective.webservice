@@ -173,14 +173,13 @@ def node_to_dict(node, node_data):
     http://stackoverflow.com/questions/2412486/serializing-a-suds-object-in-python
     Author: Rogerio Hilbert Lima
     """
-
-    if getattr(node, '__keylist__'):
+    if getattr(node, '__keylist__', None):
         keys = node.__keylist__
         for key in keys:
             if isinstance(node[key], list):
                 lkey = key.replace('[]', '')
                 node_data[lkey] = node_to_dict(node[key], [])
-            elif getattr(node[key], '__keylist__'):
+            elif getattr(node[key], '__keylist__', None):
                 node_data[key] = node_to_dict(node[key], {})
             else:
                 if isinstance(node_data, list):
